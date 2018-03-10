@@ -1,6 +1,6 @@
 import {
     Body, Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Req,
-    ValidationPipe
+    ValidationPipe,
 } from '@nestjs/common';
 import {AuthService} from './auth.service';
 import {AuthenticateUserRequest} from './auth.model';
