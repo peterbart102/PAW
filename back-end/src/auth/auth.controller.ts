@@ -1,4 +1,4 @@
-import {Controller, Get, HttpCode, HttpStatus, Param, Post, Req} from '@nestjs/common';
+import {Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Req} from '@nestjs/common';
 import {AuthService} from './auth.service';
 
 @Controller('auth')
@@ -13,7 +13,7 @@ export class AuthController {
     }
 
     @Get('authorized/:id')
-    public async authorized(@Req() req, @Param('id') id: number) {
+    public async authorized(@Req() req, @Param('id', new ParseIntPipe()) id: number) {
         console.log('Authorized route...');
         console.log(id + 5);
         return JSON.stringify({userId: String(id)});
