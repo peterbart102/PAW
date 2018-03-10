@@ -12,9 +12,9 @@ export class AuthController {
 
     @Post('token')
     @HttpCode(HttpStatus.OK)
-    public async getToken(@Body(new ValidationPipe()) body: AuthenticateUserRequest) {
-        console.log(body);
-        return this.authService.createToken();
+    public async getToken(@Body(new ValidationPipe()) authenticateUserRequest: AuthenticateUserRequest) {
+        console.log(authenticateUserRequest);
+        return this.authService.createToken(authenticateUserRequest);
     }
 
     @Get('authorized/:id')
