@@ -1,4 +1,4 @@
-import {Controller, Get, HttpCode, HttpStatus, Post} from '@nestjs/common';
+import {Controller, Get, HttpCode, HttpStatus, Param, Post, Req} from '@nestjs/common';
 import {AuthService} from './auth.service';
 
 @Controller('auth')
@@ -12,9 +12,10 @@ export class AuthController {
         return await this.authService.createToken();
     }
 
-    @Get('authorized')
-    public async authorized() {
+    @Get('authorized/:id')
+    public async authorized(@Req() req, @Param('id') id: number) {
         console.log('Authorized route...');
-        return 'XDDD';
+        console.log(id + 5);
+        return JSON.stringify({userId: String(id)});
     }
 }
