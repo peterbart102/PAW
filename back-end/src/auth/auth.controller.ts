@@ -1,5 +1,9 @@
-import {Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Req} from '@nestjs/common';
+import {
+    Body, Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Req,
+    ValidationPipe
+} from '@nestjs/common';
 import {AuthService} from './auth.service';
+import {AuthenticateUserRequest} from './auth.model';
 
 @Controller('auth')
 export class AuthController {
@@ -8,7 +12,8 @@ export class AuthController {
 
     @Post('token')
     @HttpCode(HttpStatus.OK)
-    public async getToken() {
+    public async getToken(@Body(new ValidationPipe()) body: AuthenticateUserRequest) {
+        console.log(body);
         return await this.authService.createToken();
     }
 
