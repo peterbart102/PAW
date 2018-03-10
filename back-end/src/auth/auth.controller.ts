@@ -14,7 +14,7 @@ export class AuthController {
     @HttpCode(HttpStatus.OK)
     public async getToken(@Body(new ValidationPipe()) body: AuthenticateUserRequest) {
         console.log(body);
-        return await this.authService.createToken();
+        return this.authService.createToken();
     }
 
     @Get('authorized/:id')
