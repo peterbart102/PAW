@@ -1,0 +1,12 @@
+mariadb:
+  container_name: mariadb
+  image: mariadb:latest
+  expose:
+    - 3306
+  ports:
+    - 3306:3306
+  environment:
+    MYSQL_ROOT_PASSWORD: mysqlPassword
+  volumes:
+   - ./data/mariadb/:/var/lib/mysql
+   - ./config/mariadb/init/:/docker-entrypoint-initdb.d
