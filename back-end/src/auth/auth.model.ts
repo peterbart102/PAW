@@ -12,8 +12,3 @@ export class AuthenticateUserRequest {
     @IsString()
     password: string;
 }
-
-export class UserModel {
-    email: string;
-    passwordHash: string;
-}

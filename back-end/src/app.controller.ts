@@ -6,4 +6,9 @@ export class AppController {
     root(): string {
         return 'Hello WorldXDDDD!';
     }
+
+    @Get('something')
+    something(): string {
+        return 'something xddd';
+    }
 }
