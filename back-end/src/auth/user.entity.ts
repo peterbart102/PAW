@@ -1,4 +1,5 @@
-import {BaseEntity, Column, Entity, PrimaryGeneratedColumn} from 'typeorm';
+import {BaseEntity, Column, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn} from 'typeorm';
+import {BoardEntity} from '../board.entity';
 
 @Entity()
 export class UserEntity extends BaseEntity {
@@ -8,4 +9,6 @@ export class UserEntity extends BaseEntity {
     email: string;
     @Column()
     passwordHash: string;
+    @OneToMany(type => BoardEntity, boardEntity => boardEntity.owner)
+    boards: BoardEntity[];
 }

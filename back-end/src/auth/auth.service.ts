@@ -28,9 +28,10 @@ export class AuthService {
         });
     }
 
-    async validateUser(signedUser: ValidateUser): Promise<boolean> {
-        // TODO: put some validation logic here
-        console.log('validateUser' + JSON.stringify(signedUser));
-        return true;
+    static async validateUser(signedUser: ValidateUser): Promise<UserEntity | undefined> {
+        return UserEntity.findOne({
+                email: signedUser.email
+            }
+        );
     }
 }

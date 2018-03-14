@@ -16,6 +16,7 @@ export class AppController {
         userEntity.email = 'rafal@ot.com';
         // this is 123456 in md5
         userEntity.passwordHash = 'e10adc3949ba59abbe56e057f20f883e';
+        userEntity.boards = [boardEntity];
 
         cardEntity.title = 'This is a card';
         cardEntity.parentList = listEntity;
