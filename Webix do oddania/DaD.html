@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+    <link rel="stylesheet" href="http://cdn.webix.com/edge/webix.css" type="text/css" charset="utf-8"> 
+    <script src="http://cdn.webix.com/edge/webix.js" type="text/javascript" charset="utf-8"></script>  
+	<script src="dad_dane.js" type="text/javascript"></script>  
+		<style>
+			body
+			{
+				background:skyblue;
+			}
+			#login
+			{
+				width:1000px;
+				margin-left:auto;
+				margin-right:auto;
+				height:900px;
+				padding:10px;
+			}
+		</style>
+    </head>
+    <body>
+		<div id="login"></div>
+        <script type="text/javascript" charset="utf-8">
+		var zad01_dane=dane_01;
+		var zad02_dane=dane_02;
+		var zad03_dane=dane_03;
+			webix.ui({
+				container:"login",
+				cols:[
+					{
+						view:"datatable", 
+						id:"dtable1",
+						drag:true,
+						scrollY:false,
+						scrollX:false,
+						columns:[{id:"zad1", header:"Zadanie_01", width:300}],
+						data:zad01_dane
+						
+					},
+					{
+						view:"datatable", 
+						id:"dtable2",
+						drag:true,
+						scrollY:false,
+						scrollX:false,
+						columns:[{id:"zad1", header:"Zadanie_02", width:300}],
+						data:zad02_dane
+					},
+					{
+						view:"datatable", 
+						id:"dtable3",
+						drag:true,
+						scrollY:false,
+						scrollX:false,
+						columns:[{id:"zad1", header:"Zadanie_03", width:300}],
+						data:zad03_dane
+					}
+				  ]
+				});				
+
+        </script>
+    </body>
+</html>
