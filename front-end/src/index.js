@@ -10,9 +10,13 @@ const loginCallback = (text, data) => {
         Cookies.set('access_token', dataJson.access_token, {expires: dataJson.expires_in});
     }
 };
+
 webix.ui({
     id: "login",
     view: "form",
+    css: 'loginForm',
+    width: 400,
+    height: 170,
     elements: [
         {
             view: "text",
