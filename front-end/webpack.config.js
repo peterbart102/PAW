@@ -1,3 +1,4 @@
+const path = require("path");
 const HtmlWebPackPlugin = require("html-webpack-plugin");
 module.exports = {
     module: {
@@ -19,6 +20,14 @@ module.exports = {
                 ]
             }
         ]
+    },
+    resolve: {
+        extensions: [".js"],
+        modules: ["./sources", "node_modules"],
+        alias: {
+            "jet-views": path.resolve(__dirname, "src/views"),
+            "jet-locales": path.resolve(__dirname, "src/locales")
+        }
     },
     plugins: [
         new HtmlWebPackPlugin({
