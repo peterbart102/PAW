@@ -3,7 +3,7 @@ export function auth(app, view, config) {
     const authModel = config.model;
     const login = config.login || "/login";
     const logout = config.logout || "/logout";
-    const afterLogin = config.afterLogin || app.config.start;
+    const afterLogin = "/some" //config.afterLogin || app.config.start;
     const afterLogout = config.afterLogout || "/login";
     const ping = config.ping || 5 * 60 * 1000;
 
@@ -26,13 +26,14 @@ export function auth(app, view, config) {
 
         login(name, pass) {
             return authModel.login(name, pass).then((data) => {
-
                 credentials = data;
 
                 if (!data) {
                     throw ("Access denied");
                 }
 
+                console.log("dupa")
+                console.log(data.json())
                 app.show(afterLogin);
             });
         },
@@ -46,19 +47,23 @@ export function auth(app, view, config) {
 
     function canNavigate(url, obj) {
 
-        if (url === logout) {
+/*        if (url === logout) {
             service.logout();
             obj.redirect = afterLogout;
             app.show(afterLogout);
         } else if (url !== login && !service.getStatus()) {
             obj.redirect = login;
             app.show(login);
-        }
+        }*/
     }
 
     app.setService("auth", service);
 
     app.attachEvent(`app:guard`, function (url, _$root, obj) {
+        console.log(url);
+        console.log(_$root);
+        console.log(obj);
+        console.log(credentials);
         if (credentials === null) {
             obj.confirm = service.getStatus(true).then(any => {
                 canNavigate(url, obj);

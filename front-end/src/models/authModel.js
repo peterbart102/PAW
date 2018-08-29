@@ -1,6 +1,16 @@
 import * as Cookies from "js-cookie";
 
 export class authModel {
+    static loginCallback(text, data) {
+        const dataJson = data.json();
+        if (dataJson.failed) {
+            console.log("login failed")
+        } else {
+            console.log("success");
+            console.log(dataJson);
+            Cookies.set('access_token', dataJson.access_token, {expires: dataJson.expires_in});
+        }
+    };
 
     status() {
         return new Promise(function (resolve, reject) {
@@ -29,7 +39,10 @@ export class authModel {
     };
 
     login(username, password) {
-
+        return webix.ajax().post("http://localhost:9000/auth/token", {
+            "email": username,
+            "password": password
+        }, authModel.loginCallback);
         /*
                 webix.extend(component, webix.ProgressBar);
                 component.disable();
@@ -61,7 +74,7 @@ export class authModel {
                                 component.hideProgress();
                             });*/
 
-        if (username === "test" && password === "test") {
+/*        if (username === "test" && password === "test") {
             this.credentials = {
                 "access_token": "9c5742da1edc3531da2009fb35bb843c49e2e680",
                 "expires_in": 3600,
@@ -77,18 +90,18 @@ export class authModel {
                 resolve(this.credentials);
             });
             //return this.credentials;
-            /*
+            /!*
                         require(["app"], function(app){
                             app.router(app.config.start);
                         });
-            */
+            *!/
         } else {
             return new Promise((resolve, reject) => {
                 setTimeout(() => {
                     resolve(null);
                 }, 2000);
             });
-        }
+        }*/
     };
 
     logout() {

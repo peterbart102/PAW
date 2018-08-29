@@ -1,44 +1,81 @@
 import 'webix'
-import Cookies from 'js-cookie'
 import {JetView} from "webix-jet";
 
 
 export default class SomeView extends JetView {
     config() {
-        console.log("asdasdad");
-        const dane_01 = [
-            {id: 1, zad1: "The Shawshank Redemption_01"},
-            {id: 2, zad1: "The Godfather_01"},
-            {id: 3, zad1: "The Godfather: Part II_01"},
-            {id: 4, zad1: "Pulp fiction_01"}
+        const loadedData = {
+            listId: 123,
+            listName: "some text",
+            tasksList: Array(5).fill().map((v, i) => {
+                return {/*id: "task-" + i, */title: "Do something" + i, userName: "SuperHero123"}
+            })
+        }
 
-        ];
+        const row = this.getList(loadedData);
+        return {cols: [row], margin: 50}
+    }
+
+    getList(loadedData) {
         return {
-            container: "login",
-            cols: [
-                {
-                    view: "datatable",
-                    id: "dtable1",
-                    drag: true,
-                    scrollY: false,
-                    scrollX: false,
-                    columns: [{id: "zad1", header: "Zadanie_01", width: 300}],
-                    data: dane_01
-
-                },
-                {
-                    view: "datatable",
-                    id: "dtable2",
-                    drag: true,
-                    scrollY: false,
-                    scrollX: false,
-                    columns: [{id: "zad1", header: "Zadanie_02", width: 300}],
-                }
+            id: `list-${loadedData.listId}`,
+            rows: [
+                this.getListTitle(loadedData),
+                this.getTasksList(loadedData.tasksList)
             ]
         };
     }
 
+    getTasksList(tasksList) {
+        return {
+            view: "list",
+            template: "<div><b>#title#</b><p>#userName#</p></div>",
+            type: {
+                height: "auto", width: 250
+            },
+            select: true, drag: true,
+            data: tasksList,
+            on: {
+                onAfterDrop: (context, e) => {
+                    console.log(context.start)
+                    console.log(e)
+                }
+            }
+        };
+    }
 
-    init(view, url) {
-    };
+    getListTitle(loadedData) {
+        return {
+            id: `list-title-${loadedData.listId}`,
+            view: "template",
+            template: `<b class='editTabName' id="list-${loadedData.listId}">some text</b>`,
+            type: "header",
+            editable: true,
+            onClick: {
+                "editTabName": this.getEditTabName(loadedData)
+            }
+        };
+    }
+
+    getEditTabName(loadedData) {
+        const that = this;
+        return function (event) {
+
+            $$(event.target.id).removeView(this)
+            $$(event.target.id).addView(
+                {view: "text", id: `editName-${event.target.id}`},
+                0)
+            const editName = $$(`editName-${event.target.id}`);
+            editName.focus()
+            const handleSaveTab = function (e) {
+                console.log(e)
+                console.log(this)
+                $$(event.target.id).removeView(this)
+                $$(event.target.id).addView(that.getListTitle(loadedData), 0)
+            };
+            editName.attachEvent("onEnter", handleSaveTab)
+            editName.attachEvent("onBlur", handleSaveTab)
+            return false;
+        };
+    }
 }

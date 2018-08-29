@@ -1,6 +1,6 @@
 
 import 'webix'
-import {JetApp} from "webix-jet";
+import {JetApp, UrlRouter} from "webix-jet";
 import {authModel} from "./models/authModel";
 import {auth} from "./plugins/auth";
 
@@ -11,11 +11,10 @@ webix.ready(() => {
         start: "/login"
     });
 
-    app.render();
+    webix.ready(() => app.render() );   // mandatory!
+    // app.use(auth, {model: new authModel()});
 
-    app.use(auth, {model: new authModel()});
-
-    app.attachEvent("app:error:resolve", function (name, error) {
-        window.console.error(error);
-    });
+    // app.attachEvent("app:error:resolve", function (name, error) {
+    //     window.console.error(error);
+    // });
 });

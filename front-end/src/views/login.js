@@ -2,17 +2,12 @@ import 'webix'
 import Cookies from 'js-cookie'
 import {JetView} from "webix-jet";
 
-const loginCallback = (text, data) => {
-    const dataJson = data.json();
-    if (dataJson.failed) {
-        console.log("login failed")
-    } else {
-        console.log("success");
-        Cookies.set('access_token', dataJson.access_token, {expires: dataJson.expires_in});
-    }
-};
+
 export default class LoginView extends JetView {
     config() {
+
+        const authService = this.app.getService('auth');
+
         return {
             id: "login",
             view: "form",
@@ -41,10 +36,7 @@ export default class LoginView extends JetView {
                             const formValues = $$('login').getValues();
                             console.log(formValues.login);
                             console.log(formValues.password);
-                            webix.ajax().post("http://localhost:9000/auth/token", {
-                                "email": formValues.login,
-                                "password": formValues.password
-                            }, loginCallback);
+                            authService.login(formValues.login, formValues.password);
                             this.app.show("/some");
                         }
                     }
@@ -52,7 +44,6 @@ export default class LoginView extends JetView {
             ]
         };
     }
-
 
     init(view, url) {
     };
