@@ -79,7 +79,7 @@ export default class SomeView extends JetView {
                 //TODO: save this new tab to the DB
                 console.log(newTabName)
                 targetId.removeView(this)
-                targetId.addView(that.getListTitle(loadedData), 0)
+                targetId.addView(that.getListTitle({...loadedData}), 0)
             };
             editName.attachEvent("onEnter", handleSaveTab)
             editName.attachEvent("onBlur", handleSaveTab)
