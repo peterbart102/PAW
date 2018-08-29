@@ -67,19 +67,19 @@ export default class SomeView extends JetView {
     getEditTabName(loadedData) {
         const that = this;
         return function (event) {
-            $$(event.target.id).removeView(this)
-            $$(event.target.id).addView({view: "text", id: `editName-${event.target.id}`, value: loadedData.listName}, 0)
-            const editName = $$(`editName-${event.target.id}`);
+            const listId = event.target.id;
+            const selectedList = $$(listId);
+            const editNameId = `editName-${listId}`;
+            selectedList.removeView(this)
+            selectedList.addView({view: "text", id: editNameId, value: loadedData.listName}, 0)
+            const editName = $$(editNameId);
             that.setFocusToTheEnd(editName);
             const handleSaveTab = function (e) {
-                console.log(e)
-                console.log(this)
-                const targetId = $$(event.target.id);
-                const newTabName = this.config.value;
+                const newTabName = editName.getValue();
                 //TODO: save this new tab to the DB
-                console.log(newTabName)
-                targetId.removeView(this)
-                targetId.addView(that.getListTitle({...loadedData}), 0)
+                selectedList.removeView(editName)
+                const loadedDataWithNewTabName = {...loadedData,listName:newTabName};
+                selectedList.addView(that.getListTitle(loadedDataWithNewTabName), 0)
             };
             editName.attachEvent("onEnter", handleSaveTab)
             editName.attachEvent("onBlur", handleSaveTab)
