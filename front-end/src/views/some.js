@@ -12,8 +12,15 @@ export default class SomeView extends JetView {
             })
         }
 
-        const row = this.getList(loadedData);
-        return {cols: [row], margin: 50}
+        const loadedData2 = {
+            listId: 1234,
+            listName: "some text2",
+            tasksList: Array(5).fill().map((v, i) => {
+                return {/*id: "task-" + i, */title: "Do something" + i, userName: "SuperHero123"}
+            })
+        }
+
+        return {cols: [this.getList(loadedData), this.getList(loadedData2)], margin: 50}
     }
 
     getList(loadedData) {
@@ -48,7 +55,7 @@ export default class SomeView extends JetView {
         return {
             id: `list-title-${loadedData.listId}`,
             view: "template",
-            template: `<b class='editTabName' id="list-${loadedData.listId}">some text</b>`,
+            template: `<b class='editTabName' id="list-${loadedData.listId}">${loadedData.listName}</b>`,
             type: "header",
             editable: true,
             onClick: {
@@ -60,22 +67,28 @@ export default class SomeView extends JetView {
     getEditTabName(loadedData) {
         const that = this;
         return function (event) {
-
             $$(event.target.id).removeView(this)
-            $$(event.target.id).addView(
-                {view: "text", id: `editName-${event.target.id}`},
-                0)
+            $$(event.target.id).addView({view: "text", id: `editName-${event.target.id}`, value: loadedData.listName}, 0)
             const editName = $$(`editName-${event.target.id}`);
-            editName.focus()
+            that.setFocusToTheEnd(editName);
             const handleSaveTab = function (e) {
                 console.log(e)
                 console.log(this)
-                $$(event.target.id).removeView(this)
-                $$(event.target.id).addView(that.getListTitle(loadedData), 0)
+                const targetId = $$(event.target.id);
+                const newTabName = this.config.value;
+                //TODO: save this new tab to the DB
+                console.log(newTabName)
+                targetId.removeView(this)
+                targetId.addView(that.getListTitle(loadedData), 0)
             };
             editName.attachEvent("onEnter", handleSaveTab)
             editName.attachEvent("onBlur", handleSaveTab)
             return false;
         };
+    }
+
+    setFocusToTheEnd(editName) {
+        webix.html.setSelectionRange(editName.getInputNode(), editName.getValue().length);
+        editName.focus()
     }
 }
