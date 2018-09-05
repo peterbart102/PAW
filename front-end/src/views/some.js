@@ -1,47 +1,64 @@
 import 'webix'
 import {JetView} from "webix-jet";
 
+import Cookies from 'js-cookie'
+
 
 export default class SomeView extends JetView {
     config() {
-        const loadedData = {
-            listId: 123,
-            listName: "some text",
-            tasksList: Array(5).fill().map((v, i) => {
-                return {/*id: "task-" + i, */title: "Do something" + i, userName: "SuperHero123"}
-            })
-        }
-
-        const loadedData2 = {
-            listId: 1234,
-            listName: "some text2",
-            tasksList: Array(5).fill().map((v, i) => {
-                return {/*id: "task-" + i, */title: "Do something" + i, userName: "SuperHero123"}
-            })
-        }
-
-        return {cols: [this.getList(loadedData), this.getList(loadedData2)], margin: 50}
+        return webix.ajax().headers({
+            "Authorization": `Bearer ${Cookies.get("access_token")}`
+        }).get("http://localhost:9000/auth/board/123").then((e) => {
+            console.log("herbatka");
+            console.log(e.json());
+            return {cols: [this.getList(e.json())], margin: 50}
+        });
     }
 
     getList(loadedData) {
+        const addItemId = `add-item-${loadedData.listId}`;
         return {
             id: `list-${loadedData.listId}`,
             rows: [
                 this.getListTitle(loadedData),
-                this.getTasksList(loadedData.tasksList)
+                this.getTasksList(loadedData),
+                {
+                    cols: [
+                        {
+                            id: addItemId,
+                            view: "text",
+                        },
+                        {
+                            view: "button",
+                            width: 50,
+                            value: "Dodaj",
+                            click: (e) => {
+                                const addItem = $$(addItemId);
+                                const addItemValue = addItem.getValue();
+                                addItem.setValue("");
+                                loadedData.tasksList.push({"title":"asds"})
+
+                                const tasks = $$(`list-tasks-${loadedData.listId}`);
+                                tasks.add({"title":addItemValue}, tasks.count())
+                                console.log(`calling http://localhost:9000/auth/board/123/addItem/ with ${addItemValue}`)
+                            }
+                        }
+                    ]
+                }
             ]
         };
     }
 
-    getTasksList(tasksList) {
+    getTasksList(loadedData) {
         return {
+            id: `list-tasks-${loadedData.listId}`,
             view: "list",
-            template: "<div><b>#title#</b><p>#userName#</p></div>",
+            template: "<div><b>#title#</b><!--<p>#userName#</p>--></div>",
             type: {
                 height: "auto", width: 250
             },
             select: true, drag: true,
-            data: tasksList,
+            data: loadedData.tasksList,
             on: {
                 onAfterDrop: (context, e) => {
                     console.log(context.start)
@@ -78,7 +95,7 @@ export default class SomeView extends JetView {
                 const newTabName = editName.getValue();
                 //TODO: save this new tab to the DB
                 selectedList.removeView(editName)
-                const loadedDataWithNewTabName = {...loadedData,listName:newTabName};
+                const loadedDataWithNewTabName = {...loadedData, listName: newTabName};
                 selectedList.addView(that.getListTitle(loadedDataWithNewTabName), 0)
             };
             editName.attachEvent("onEnter", handleSaveTab)

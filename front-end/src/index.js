@@ -12,9 +12,9 @@ webix.ready(() => {
     });
 
     webix.ready(() => app.render() );   // mandatory!
-    // app.use(auth, {model: new authModel()});
+    app.use(auth, {model: new authModel()});
 
-    // app.attachEvent("app:error:resolve", function (name, error) {
-    //     window.console.error(error);
-    // });
+    app.attachEvent("app:error:resolve", function (name, error) {
+         window.console.error(error);
+     });
 });

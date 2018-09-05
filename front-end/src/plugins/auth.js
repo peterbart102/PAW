@@ -47,14 +47,14 @@ export function auth(app, view, config) {
 
     function canNavigate(url, obj) {
 
-/*        if (url === logout) {
+        if (url === logout) {
             service.logout();
             obj.redirect = afterLogout;
             app.show(afterLogout);
         } else if (url !== login && !service.getStatus()) {
             obj.redirect = login;
             app.show(login);
-        }*/
+        }
     }
 
     app.setService("auth", service);
