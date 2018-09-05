@@ -15,7 +15,7 @@ export default class SomeView extends JetView {
         });
     }
 
-        getList(loadedData) {
+    getList(loadedData) {
         const addItemId = `add-item-${loadedData.id}`;
         return {
             id: `list-${loadedData.id}`,
@@ -93,7 +93,7 @@ export default class SomeView extends JetView {
                 const newTabName = editName.getValue();
                 //TODO: save this new tab to the DB
                 selectedList.removeView(editName)
-                const loadedDataWithNewTabName = {...loadedData, listName: newTabName};
+                const loadedDataWithNewTabName = {...loadedData, title: newTabName};
                 selectedList.addView(that.getListTitle(loadedDataWithNewTabName), 0)
             };
             editName.attachEvent("onEnter", handleSaveTab)
