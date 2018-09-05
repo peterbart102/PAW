@@ -91,10 +91,15 @@ export default class SomeView extends JetView {
             that.setFocusToTheEnd(editName);
             const handleSaveTab = function (e) {
                 const newTabName = editName.getValue();
-                //TODO: save this new tab to the DB
-                selectedList.removeView(editName)
-                const loadedDataWithNewTabName = {...loadedData, title: newTabName};
-                selectedList.addView(that.getListTitle(loadedDataWithNewTabName), 0)
+                return webix.ajax().headers({
+                    "Authorization": `Bearer ${Cookies.get("access_token")}`
+                }).post(`http://localhost:9000/auth/list/${loadedData.id}`, {title: newTabName}).then((e) => {
+                    console.log(e.json());
+                    //TODO: save this new tab to the DB
+                    selectedList.removeView(editName)
+                    const loadedDataWithNewTabName = {...loadedData, title: newTabName};
+                    selectedList.addView(that.getListTitle(loadedDataWithNewTabName), 0)
+                });
             };
             editName.attachEvent("onEnter", handleSaveTab)
             editName.attachEvent("onBlur", handleSaveTab)

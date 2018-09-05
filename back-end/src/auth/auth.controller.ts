@@ -18,8 +18,8 @@ export class AuthController {
         return this.authService.createToken(authenticateUserRequest);
     }
 
-    @Get('board/:id')
-    public async board(@User() user: UserEntity, @Param('id', new ParseIntPipe()) id: number) {
+    @Get('board/:boardId')
+    public async board(@User() user: UserEntity, @Param('boardId', new ParseIntPipe()) id: number) {
         console.log('Authorized route...');
         console.log(JSON.stringify(user));
         const promise: BoardEntity = await BoardEntity.findOne({
@@ -34,10 +34,37 @@ export class AuthController {
         // console.log(JSON.stringify(value));
         // const cardsEntities2 = await Promise.all(listEntities.map(e => e.cards));
         return JSON.stringify({
-            ownerId: String(id),
             listId: await promise.id,
             listName: await promise.title,
             tasksList: await promise.lists
         });
+    }
+
+    @Post('list/:listId')
+    public async updateList(@User() user: UserEntity,
+                            @Param('listId', new ParseIntPipe()) listId: number,
+                            @Body() body: any) {
+        console.log('Authorized route...');
+        console.log(JSON.stringify(user));
+        const newTitle = body.title;
+        if (!newTitle || newTitle === '') {
+            return 'not-ok';
+        }
+        console.log(body);
+        console.log(newTitle);
+        console.log('listId' + listId);
+        const promise: ListEntity = await ListEntity.findOne({
+                where: {
+                    id: listId
+                }
+            }
+        );
+        promise.title = newTitle;
+
+        console.log(JSON.stringify(promise));
+        // const value = promise.owner;
+        // console.log(JSON.stringify(value));
+        // const cardsEntities2 = await Promise.all(listEntities.map(e => e.cards));
+        return JSON.stringify(await promise.save());
     }
 }
