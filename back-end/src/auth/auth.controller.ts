@@ -34,7 +34,7 @@ export class AuthController {
         // console.log(JSON.stringify(value));
         // const cardsEntities2 = await Promise.all(listEntities.map(e => e.cards));
         return JSON.stringify({
-            userId: String(id),
+            ownerId: String(id),
             listId: await promise.id,
             listName: await promise.title,
             tasksList: await promise.lists

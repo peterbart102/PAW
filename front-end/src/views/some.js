@@ -11,14 +11,14 @@ export default class SomeView extends JetView {
         }).get("http://localhost:9000/auth/board/123").then((e) => {
             console.log("herbatka");
             console.log(e.json());
-            return {cols: [this.getList(e.json())], margin: 50}
+            return {cols: e.json().tasksList.map(task => this.getList(task)), margin: 50}
         });
     }
 
-    getList(loadedData) {
-        const addItemId = `add-item-${loadedData.listId}`;
+        getList(loadedData) {
+        const addItemId = `add-item-${loadedData.id}`;
         return {
-            id: `list-${loadedData.listId}`,
+            id: `list-${loadedData.id}`,
             rows: [
                 this.getListTitle(loadedData),
                 this.getTasksList(loadedData),
@@ -36,10 +36,8 @@ export default class SomeView extends JetView {
                                 const addItem = $$(addItemId);
                                 const addItemValue = addItem.getValue();
                                 addItem.setValue("");
-                                loadedData.tasksList.push({"title":"asds"})
-
-                                const tasks = $$(`list-tasks-${loadedData.listId}`);
-                                tasks.add({"title":addItemValue}, tasks.count())
+                                const tasks = $$(`list-tasks-${loadedData.id}`);
+                                tasks.add({"title": addItemValue}, tasks.count())
                                 console.log(`calling http://localhost:9000/auth/board/123/addItem/ with ${addItemValue}`)
                             }
                         }
@@ -51,14 +49,14 @@ export default class SomeView extends JetView {
 
     getTasksList(loadedData) {
         return {
-            id: `list-tasks-${loadedData.listId}`,
+            id: `list-tasks-${loadedData.id}`,
             view: "list",
-            template: "<div><b>#title#</b><!--<p>#userName#</p>--></div>",
+            template: "<div><b>#title#</b>#id#<!--<p>#userName#</p>--></div>",
             type: {
                 height: "auto", width: 250
             },
             select: true, drag: true,
-            data: loadedData.tasksList,
+            data: loadedData.cards,
             on: {
                 onAfterDrop: (context, e) => {
                     console.log(context.start)
@@ -70,9 +68,9 @@ export default class SomeView extends JetView {
 
     getListTitle(loadedData) {
         return {
-            id: `list-title-${loadedData.listId}`,
+            id: `list-title-${loadedData.id}`,
             view: "template",
-            template: `<b class='editTabName' id="list-${loadedData.listId}">${loadedData.listName}</b>`,
+            template: `<b class='editTabName' id="list-${loadedData.id}">${loadedData.title}</b>`,
             type: "header",
             editable: true,
             onClick: {
@@ -88,7 +86,7 @@ export default class SomeView extends JetView {
             const selectedList = $$(listId);
             const editNameId = `editName-${listId}`;
             selectedList.removeView(this)
-            selectedList.addView({view: "text", id: editNameId, value: loadedData.listName}, 0)
+            selectedList.addView({view: "text", id: editNameId, value: loadedData.title}, 0)
             const editName = $$(editNameId);
             that.setFocusToTheEnd(editName);
             const handleSaveTab = function (e) {
