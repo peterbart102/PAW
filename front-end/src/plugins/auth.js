@@ -24,18 +24,17 @@ export function auth(app, view, config) {
             });
         },
 
-        login(name, pass) {
-            return authModel.login(name, pass).then((data) => {
+        async login(name, pass) {
+            const promise = authModel.login(name, pass)
+            promise.then((data) => {
                 credentials = data;
-
-                if (!data) {
-                    throw ("Access denied");
+                console.log("data")
+                console.log(data)
+                if (!data.failed) {
+                    app.show(afterLogin);
                 }
-
-                console.log("dupa")
-                console.log(data.json())
-                app.show(afterLogin);
             });
+            return promise;
         },
 
         logout() {

@@ -1,8 +1,7 @@
 import * as Cookies from "js-cookie";
 
 export class authModel {
-    static loginCallback(text, data) {
-        const dataJson = data.json();
+    static loginCallback(dataJson) {
         if (dataJson.failed) {
             console.log("login failed")
         } else {
@@ -38,11 +37,13 @@ export class authModel {
         this.user = userId;
     };
 
-    login(username, password) {
-        return webix.ajax().post("http://localhost:9000/auth/token", {
+    async login(username, password) {
+        const promise = await webix.ajax().post("http://localhost:9000/auth/token", {
             "email": username,
             "password": password
-        }, authModel.loginCallback);
+        });
+        authModel.loginCallback(promise.json())
+        return promise.json();
         /*
                 webix.extend(component, webix.ProgressBar);
                 component.disable();
