@@ -36,9 +36,15 @@ export default class SomeView extends JetView {
                                 const addItem = $$(addItemId);
                                 const addItemValue = addItem.getValue();
                                 addItem.setValue("");
-                                const tasks = $$(`list-tasks-${loadedData.id}`);
-                                tasks.add({"title": addItemValue}, tasks.count())
-                                console.log(`calling http://localhost:9000/auth/board/123/addItem/ with ${addItemValue}`)
+                                console.log(`calling http://localhost:9000/auth/list/${loadedData.id}/addItem/ with ${addItemValue}`)
+                                return webix.ajax().headers({
+                                    "Authorization": `Bearer ${Cookies.get("access_token")}`
+                                }).post(`http://localhost:9000/auth/list/${loadedData.id}/newCard`, {title: addItemValue}).then((e) => {
+                                    const response = e.json();
+                                    console.log(response);
+                                    const tasks = $$(`list-tasks-${loadedData.id}`);
+                                    tasks.add({"title": response.title, "id": response.id}, tasks.count())
+                                });
                             }
                         }
                     ]
@@ -95,7 +101,6 @@ export default class SomeView extends JetView {
                     "Authorization": `Bearer ${Cookies.get("access_token")}`
                 }).post(`http://localhost:9000/auth/list/${loadedData.id}`, {title: newTabName}).then((e) => {
                     console.log(e.json());
-                    //TODO: save this new tab to the DB
                     selectedList.removeView(editName)
                     const loadedDataWithNewTabName = {...loadedData, title: newTabName};
                     selectedList.addView(that.getListTitle(loadedDataWithNewTabName), 0)

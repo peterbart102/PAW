@@ -5,6 +5,7 @@ import {UserEntity} from './user.entity';
 import {User} from './user.decorator';
 import {BoardEntity} from '../board.entity';
 import {ListEntity} from '../list.entity';
+import {CardEntity} from '../card.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -44,6 +45,24 @@ export class AuthController {
     public async updateList(@User() user: UserEntity,
                             @Param('listId', new ParseIntPipe()) listId: number,
                             @Body() body: any) {
+        const newTitle = body.title;
+        if (!newTitle || newTitle === '') {
+            return 'not-ok';
+        }
+        const promise: ListEntity = await ListEntity.findOne({
+                where: {
+                    id: listId
+                }
+            }
+        );
+        promise.title = newTitle;
+        return JSON.stringify(await promise.save());
+    }
+
+    @Post('list/:listId/newCard')
+    public async addCard(@User() user: UserEntity,
+                         @Param('listId', new ParseIntPipe()) listId: number,
+                         @Body() body: any) {
         console.log('Authorized route...');
         console.log(JSON.stringify(user));
         const newTitle = body.title;
@@ -59,12 +78,10 @@ export class AuthController {
                 }
             }
         );
-        promise.title = newTitle;
 
-        console.log(JSON.stringify(promise));
-        // const value = promise.owner;
-        // console.log(JSON.stringify(value));
-        // const cardsEntities2 = await Promise.all(listEntities.map(e => e.cards));
-        return JSON.stringify(await promise.save());
+        const newCard = new CardEntity();
+        newCard.title = newTitle;
+        newCard.parentList = promise;
+        return JSON.stringify(await newCard.save());
     }
 }
