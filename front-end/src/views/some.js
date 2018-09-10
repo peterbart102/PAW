@@ -56,6 +56,7 @@ export default class SomeView extends JetView {
     getTasksList(loadedData) {
         return {
             id: `list-tasks-${loadedData.id}`,
+            id_pure: loadedData.id,
             view: "list",
             template: "<div><b>#title#</b>#id#<!--<p>#userName#</p>--></div>",
             type: {
@@ -65,8 +66,13 @@ export default class SomeView extends JetView {
             data: loadedData.cards,
             on: {
                 onAfterDrop: (context, e) => {
-                    console.log(context.start)
-                    console.log(e)
+                    const cardId = context.start;
+                    const newListIdContainer = context.to.config.id_pure;
+                    return webix.ajax().headers({
+                        "Authorization": `Bearer ${Cookies.get("access_token")}`
+                    }).post(`http://localhost:9000/auth/list/${newListIdContainer}/moveCard/${cardId}`).then((e) => {
+                        console.log(e.json());
+                    });
                 }
             }
         };

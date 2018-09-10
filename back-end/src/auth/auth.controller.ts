@@ -84,4 +84,25 @@ export class AuthController {
         newCard.parentList = promise;
         return JSON.stringify(await newCard.save());
     }
+
+    @Post('list/:listId/moveCard/:cardId')
+    public async moveCard(@User() user: UserEntity,
+                          @Param('listId', new ParseIntPipe()) listId: number,
+                          @Param('cardId', new ParseIntPipe()) cardId: number,
+                          ) {
+        const newListEntity: ListEntity = await ListEntity.findOne({
+                where: {
+                    id: listId
+                }
+            }
+        );
+
+        const cardEntity = await CardEntity.findOne({
+            where: {
+                id: cardId
+            }
+        });
+        cardEntity.parentList = newListEntity;
+        return JSON.stringify(await cardEntity.save());
+    }
 }
