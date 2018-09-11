@@ -8,12 +8,46 @@ export default class SomeView extends JetView {
     config() {
         return webix.ajax().headers({
             "Authorization": `Bearer ${Cookies.get("access_token")}`
-        }).get("http://localhost:9000/auth/board/123").then((e) => {
+        }).get("http://localhost:9000/auth/board/1").then((e) => {
             console.log("herbatka");
             console.log(e.json());
-            return {cols: e.json().tasksList.map(task => this.getList(task)), margin: 50}
+            const lists = e.json().tasksList.map(task => this.getList(task));
+            return {cols: lists.concat(this.newListView()), margin: 50}
         });
     }
+
+    newListView() {
+        return {
+            width: 200,
+            height: 50,
+            rows: [
+                {
+                    cols: [
+                        {view: "text",},
+                        {
+                            view: "button",
+                            width: 50,
+                            value: "Dodaj",
+                            click: (e) => {
+                                const addItem = $$(addItemId);
+                                const addItemValue = addItem.getValue();
+                                addItem.setValue("");
+                                console.log(`calling http://localhost:9000/auth/list/${loadedData.id}/addItem/ with ${addItemValue}`)
+                                return webix.ajax().headers({
+                                    "Authorization": `Bearer ${Cookies.get("access_token")}`
+                                }).post(`http://localhost:9000/auth/list/${loadedData.id}/newCard`, {title: addItemValue}).then((e) => {
+                                    const response = e.json();
+                                    console.log(response);
+                                    const tasks = $$(`list-tasks-${loadedData.id}`);
+                                    tasks.add({"title": response.title, "id": response.id}, tasks.count())
+                                });
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    };
 
     getList(loadedData) {
         const addItemId = `add-item-${loadedData.id}`;

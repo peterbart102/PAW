@@ -41,6 +41,30 @@ export class AuthController {
         });
     }
 
+    @Post('board/:boardId/addList')
+    public async newList(
+        @User() user: UserEntity,
+        @Param('boardId', new ParseIntPipe()) boardId: number,
+        @Body() body: any
+    ) {
+        console.log('Authorized route...');
+        console.log(JSON.stringify(user));
+        const boardEntity: BoardEntity = await BoardEntity.findOne({
+                where: {
+                    id: boardId
+                }
+            }
+        );
+        if (boardEntity) {
+            const newListEntity = new ListEntity();
+            newListEntity.title = body.title;
+            newListEntity.board = boardEntity;
+            return JSON.stringify(await newListEntity.save());
+        } else {
+            return 'not-ok';
+        }
+    }
+
     @Post('list/:listId')
     public async updateList(@User() user: UserEntity,
                             @Param('listId', new ParseIntPipe()) listId: number,
@@ -89,7 +113,7 @@ export class AuthController {
     public async moveCard(@User() user: UserEntity,
                           @Param('listId', new ParseIntPipe()) listId: number,
                           @Param('cardId', new ParseIntPipe()) cardId: number,
-                          ) {
+    ) {
         const newListEntity: ListEntity = await ListEntity.findOne({
                 where: {
                     id: listId
